@@ -7,6 +7,6 @@ namespace Jira_bot.Interfaces
     {
         public SourceDetails AddSourceDetails(SourceDetails sourceDetails);
         public bool checkIfUserAlreadyRegistered(string userId);
-        public Task<string> AddWorklog(JiraWorkLog worklogDetails);
+        public Task<string> AddWorklogForUser(JiraWorkLog worklogDetails, string userId);
     }
 }

@@ -202,9 +202,6 @@ namespace Jira_bot.Bots
         {
             var worklogDetails = new JiraWorkLog
             {
-                baseUrl = "https://uworxltd.atlassian.net",
-                email = "",
-                token = "",
                 issueId = (string)jsonData["IssueNumber"],
                 body = new WorklogDetailsBody
                 {
@@ -213,7 +210,7 @@ namespace Jira_bot.Bots
                 }
             };
 
-            var replyText = await jiraWorklogService.AddWorklog(worklogDetails);
+            var replyText = await jiraWorklogService.AddWorklogForUser(worklogDetails, turnContext.Activity.From.Id);
             logger.LogDebug("Reply Text:"+replyText);
             await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
         }
