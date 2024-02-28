@@ -8,6 +8,7 @@ using System;
 using AdaptiveCards;
 using Jira_bot.Interfaces;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Jira_bot.Bots
 {
@@ -15,10 +16,12 @@ namespace Jira_bot.Bots
     public class EchoBot : ActivityHandler
     {
         private IJiraWorklogService jiraWorklogService;
+        private ILogger<EchoBot> logger;
 
-        public EchoBot(IJiraWorklogService jiraWorklogService)
+        public EchoBot(IJiraWorklogService jiraWorklogService, ILogger<EchoBot> logger)
         {
             this.jiraWorklogService = jiraWorklogService;
+            this.logger = logger;
         }
 
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
@@ -200,8 +203,8 @@ namespace Jira_bot.Bots
             var worklogDetails = new JiraWorkLog
             {
                 baseUrl = "https://uworxltd.atlassian.net",
-                email = "alamgir.hassan@uworx.co.uk",
-                token = "ATATT3xFfGF0gmS8aFvsD3BI0dCL-Tc8thq5pbm1QHevEsE2beCzJsFl2QCpDTWuKZiwKdxTSE5FBoxYibDUyN-LyDSkEyENW039v1Y_1XrQDjHcon6SAm7lK1LceY1rCBaGxM_lm8lKUVJhcxHmXOmGP_kcyeWVcSRrk3-PazhWG8RoX_TDdV4=19FB1B6B",
+                email = "",
+                token = "",
                 issueId = (string)jsonData["IssueNumber"],
                 body = new WorklogDetailsBody
                 {
@@ -211,6 +214,7 @@ namespace Jira_bot.Bots
             };
 
             var replyText = await jiraWorklogService.AddWorklog(worklogDetails);
+            logger.LogDebug("Reply Text:"+replyText);
             await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
         }
 
