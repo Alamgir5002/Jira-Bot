@@ -46,7 +46,7 @@ namespace Jira_bot
 
             //adding dependency injection 
             services.AddScoped<ISourceDetailsRepository, SourceDetailsRepository>();
-            services.AddScoped<IJiraWorklogService, JiraWorklogService>();
+            services.AddScoped<IJSourceWorklogService, SourceWorklogService>();
 
             // Create the Bot Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();

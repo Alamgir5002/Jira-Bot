@@ -2,7 +2,7 @@
 
 namespace Jira_bot.Models
 {
-    public class JiraWorkLog
+    public class SourceWorkLog
     {
         public string baseUrl { get; set; }
         public string email { get; set; }

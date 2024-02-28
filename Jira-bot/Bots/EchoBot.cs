@@ -15,12 +15,12 @@ namespace Jira_bot.Bots
 
     public class EchoBot : ActivityHandler
     {
-        private IJiraWorklogService jiraWorklogService;
+        private IJSourceWorklogService sourceWorklogService;
         private ILogger<EchoBot> logger;
 
-        public EchoBot(IJiraWorklogService jiraWorklogService, ILogger<EchoBot> logger)
+        public EchoBot(IJSourceWorklogService sourceWorklogService, ILogger<EchoBot> logger)
         {
-            this.jiraWorklogService = jiraWorklogService;
+            this.sourceWorklogService = sourceWorklogService;
             this.logger = logger;
         }
 
@@ -62,7 +62,7 @@ namespace Jira_bot.Bots
             {
                 if (member.Id != turnContext.Activity.Recipient.Id)
                 {;
-                    if (!jiraWorklogService.checkIfUserAlreadyRegistered(member.Id))
+                    if (!sourceWorklogService.checkIfUserAlreadyRegistered(member.Id))
                     {
                         var cardAttachment = CreateSourceAdaptiveCard();
                         var reply = MessageFactory.Attachment(cardAttachment);
@@ -193,14 +193,14 @@ namespace Jira_bot.Bots
                 SourceURL = (string)jsonData["SourceURL"],
                 Id = turnContext.Activity.From.Id
             };
-            jiraWorklogService.AddSourceDetails(sourceDetails);
+            sourceWorklogService.AddSourceDetails(sourceDetails);
             var replyText = "Source details added successfully. Now you can log your work using log command";
             await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
         }
 
         private async Task processWorklogCard(ITurnContext<IMessageActivity> turnContext, JObject jsonData, CancellationToken cancellationToken)
         {
-            var worklogDetails = new JiraWorkLog
+            var worklogDetails = new SourceWorkLog
             {
                 issueId = (string)jsonData["IssueNumber"],
                 body = new WorklogDetailsBody
@@ -210,7 +210,7 @@ namespace Jira_bot.Bots
                 }
             };
 
-            var replyText = await jiraWorklogService.AddWorklogForUser(worklogDetails, turnContext.Activity.From.Id);
+            var replyText = await sourceWorklogService.AddWorklogForUser(worklogDetails, turnContext.Activity.From.Id);
             logger.LogDebug("Reply Text:"+replyText);
             await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
         }
