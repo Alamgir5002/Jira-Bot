@@ -6,8 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System;
 using AdaptiveCards;
-using Newtonsoft.Json.Linq;
 using Jira_bot.Interfaces;
+using Newtonsoft.Json.Linq;
 
 namespace Jira_bot.Bots
 {
@@ -156,11 +156,11 @@ namespace Jira_bot.Bots
                     },
                      new AdaptiveTextInput
                     {
-                        Label = "Ticket Number",
-                        Id = "TicketNumber",
-                        Placeholder = "Enter your ticket number",
+                        Label = "Issue Number",
+                        Id = "IssueNumber",
+                        Placeholder = "Enter your issue number",
                         IsRequired = true,
-                        ErrorMessage = "Required ticket number"
+                        ErrorMessage = "Required issue number"
                     },
                 },
                 Actions =
@@ -197,14 +197,20 @@ namespace Jira_bot.Bots
 
         private async Task processWorklogCard(ITurnContext<IMessageActivity> turnContext, JObject jsonData, CancellationToken cancellationToken)
         {
-            var worklogDetails = new WorklogDetails()
+            var worklogDetails = new JiraWorkLog
             {
-                WorklogDate = (DateTime)jsonData["Date"],
-                WorklogTime = (TimeSpan)jsonData["Time"],
-                TicketId = (string)jsonData["TicketNumber"]
+                baseUrl = "https://uworxltd.atlassian.net",
+                email = "alamgir.hassan@uworx.co.uk",
+                token = "ATATT3xFfGF0gmS8aFvsD3BI0dCL-Tc8thq5pbm1QHevEsE2beCzJsFl2QCpDTWuKZiwKdxTSE5FBoxYibDUyN-LyDSkEyENW039v1Y_1XrQDjHcon6SAm7lK1LceY1rCBaGxM_lm8lKUVJhcxHmXOmGP_kcyeWVcSRrk3-PazhWG8RoX_TDdV4=19FB1B6B",
+                issueId = (string)jsonData["IssueNumber"],
+                body = new WorklogDetailsBody
+                {
+                    started = ((DateTime)jsonData["Date"]).ToString("yyyy-MM-ddTHH:mm:ss.fffzzss"),
+                    timeSpentSeconds = (int)((TimeSpan)jsonData["Time"]).TotalSeconds
+                }
             };
-            worklogDetails.TimeInSeconds = worklogDetails.WorklogTime.TotalSeconds;
-            var replyText = $"Worklog added successfully against ticket {worklogDetails.TicketId}";
+
+            var replyText = await jiraWorklogService.AddWorklog(worklogDetails);
             await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
         }
 
