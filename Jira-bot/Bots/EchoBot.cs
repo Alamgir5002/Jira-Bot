@@ -1,34 +1,24 @@
-﻿using Models;
+﻿using Jira_bot.Models;
 using Microsoft.Bot.Builder;
-using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
-using System.Linq;
-using Microsoft.Extensions.FileSystemGlobbing.Internal;
-using System.Text.RegularExpressions;
-using static LGTemplateParser;
-using Microsoft.EntityFrameworkCore;
 using AdaptiveCards;
-using Microsoft.Bot.Schema;
 using Newtonsoft.Json.Linq;
-using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
-using Newtonsoft.Json;
+using Jira_bot.Interfaces;
 
 namespace Jira_bot.Bots
 {
 
     public class EchoBot : ActivityHandler
     {
-        private readonly DatabaseContext databaseContext;
-        SourceDetails sourceDetails;
-        private const string tokenRegexPattern = "token:\\s*(\\S+),\\s*url:\\s*(\\S+)\r\n";
+        private IJiraWorklogService jiraWorklogService;
 
-        public EchoBot(DatabaseContext databaseContext)
+        public EchoBot(IJiraWorklogService jiraWorklogService)
         {
-            this.databaseContext = databaseContext;
+            this.jiraWorklogService = jiraWorklogService;
         }
 
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
@@ -68,9 +58,8 @@ namespace Jira_bot.Bots
             foreach (var member in membersAdded)
             {
                 if (member.Id != turnContext.Activity.Recipient.Id)
-                {
-                    sourceDetails = FindDetailsById(member.Id);
-                    if (sourceDetails == null)
+                {;
+                    if (!jiraWorklogService.checkIfUserAlreadyRegistered(member.Id))
                     {
                         var cardAttachment = CreateSourceAdaptiveCard();
                         var reply = MessageFactory.Attachment(cardAttachment);
@@ -84,11 +73,6 @@ namespace Jira_bot.Bots
                     }
                 }
             }
-        }
-
-        private SourceDetails FindDetailsById(string id)
-        {
-            return databaseContext.SourceDetails.FirstOrDefault(source => source.Id == id);
         }
 
         public Attachment CreateSourceAdaptiveCard()
@@ -109,7 +93,7 @@ namespace Jira_bot.Bots
                         Id = "Email",
                         Placeholder = "Enter your email",
                         IsRequired = true,
-                        ErrorMessage = "Required user email"
+                        ErrorMessage = "Required user email",
                     },
                      new AdaptiveTextInput
                     {
@@ -206,8 +190,7 @@ namespace Jira_bot.Bots
                 SourceURL = (string)jsonData["SourceURL"],
                 Id = turnContext.Activity.From.Id
             };
-            databaseContext.SourceDetails.Add(sourceDetails);
-            databaseContext.SaveChanges();
+            jiraWorklogService.AddSourceDetails(sourceDetails);
             var replyText = "Source details added successfully. Now you can log your work using log command";
             await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
         }

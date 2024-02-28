@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Models
+namespace Jira_bot.Models
 {
     public class DatabaseContext : DbContext
     {

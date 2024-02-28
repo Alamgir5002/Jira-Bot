@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Models
+namespace Jira_bot.Models
 {
     public class WorklogDetails
     {

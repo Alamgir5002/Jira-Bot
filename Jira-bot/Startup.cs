@@ -9,7 +9,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Models;
+using Jira_bot.Models;
+using Jira_bot.Repository.Interfaces;
+using Jira_bot.Repository;
+using Jira_bot.Interfaces;
+using Jira_bot.Services;
 
 namespace Jira_bot
 {
@@ -25,6 +29,7 @@ namespace Jira_bot
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddHttpClient().AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.MaxDepth = HttpHelper.BotMessageSerializerSettings.MaxDepth;
@@ -39,6 +44,9 @@ namespace Jira_bot
             // Create the Bot Framework Authentication to be used with the Bot Adapter.
             services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
 
+            //adding dependency injection 
+            services.AddScoped<ISourceDetailsRepository, SourceDetailsRepository>();
+            services.AddScoped<IJiraWorklogService, JiraWorklogService>();
 
             // Create the Bot Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
