@@ -9,11 +9,12 @@ using AdaptiveCards;
 using Jira_bot.Interfaces;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Logging;
+using Microsoft.Bot.Builder.Teams;
 
 namespace Jira_bot.Bots
 {
 
-    public class EchoBot : ActivityHandler
+    public class EchoBot : TeamsActivityHandler
     {
         private IJSourceWorklogService sourceWorklogService;
         private ILogger<EchoBot> logger;
