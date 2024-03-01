@@ -2,15 +2,17 @@
 using Jira_teams_bot.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Jirabot.Migrations
+namespace Jirateamsapp.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240227121409_udpdatedSchema")]
-    partial class udpdatedSchema
+    [Migration("20240301065816_initialMigration")]
+    partial class initialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,7 +24,7 @@ namespace Jirabot.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Models.SourceDetails", b =>
+            modelBuilder.Entity("Jira_teams_bot.Models.SourceDetails", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");

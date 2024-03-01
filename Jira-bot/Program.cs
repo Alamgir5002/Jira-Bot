@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Jira_bot
+namespace Jira_teams_bot
 {
     public class Program
     {

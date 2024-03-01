@@ -1,9 +1,5 @@
-﻿using Jira_teams_bot.Models;
-using Newtonsoft.Json;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using System.Text;
+
 
 namespace Jira_teams_bot.Services
 {

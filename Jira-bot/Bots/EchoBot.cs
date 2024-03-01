@@ -1,4 +1,4 @@
-﻿using Jira_bot.Models;
+﻿using Jira_teams_bot.Models;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
 using System.Collections.Generic;
@@ -6,12 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System;
 using AdaptiveCards;
-using Jira_bot.Interfaces;
+using Jira_teams_bot.Interfaces;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Bot.Builder.Teams;
 
-namespace Jira_bot.Bots
+namespace Jira_teams_bot.Bots
 {
 
     public class EchoBot : TeamsActivityHandler

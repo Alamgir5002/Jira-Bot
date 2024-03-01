@@ -9,13 +9,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Jira_bot.Models;
-using Jira_bot.Repository.Interfaces;
-using Jira_bot.Repository;
-using Jira_bot.Interfaces;
-using Jira_bot.Services;
+using Jira_teams_bot.Models;
+using Jira_teams_bot.Repository.Interfaces;
+using Jira_teams_bot.Repository;
+using Jira_teams_bot.Interfaces;
+using Jira_teams_bot.Services;
 
-namespace Jira_bot
+namespace Jira_teams_bot
 {
     public class Startup
     {

@@ -1,6 +1,5 @@
 ﻿using Jira_teams_bot.Models;
 using Jira_teams_bot.Repository.Interfaces;
-using System.Linq;
 
 namespace Jira_teams_bot.Repository
 {

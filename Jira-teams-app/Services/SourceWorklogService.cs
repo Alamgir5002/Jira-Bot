@@ -1,10 +1,6 @@
 ﻿using Jira_teams_bot.Interfaces;
 using Jira_teams_bot.Models;
 using Jira_teams_bot.Repository.Interfaces;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Jira_teams_bot.Services
 {

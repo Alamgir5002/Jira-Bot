@@ -1,5 +1,4 @@
 ﻿using Jira_teams_bot.Models;
-using System.Threading.Tasks;
 
 namespace Jira_teams_bot.Interfaces
 {
