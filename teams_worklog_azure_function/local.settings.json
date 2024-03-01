@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "FUNCTIONS_EXTENSION_VERSION": "~4",
+    "WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED": "1",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=e3589999-9fa3-4b69-b885-a75baf2d6f40;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+    "AzureWebJobsSecretStorageType": "files",
+    "WEBSITE_RUN_FROM_PACKAGE": "1",
+    "CosmosDbConnectionSetting": "AccountEndpoint=https://teams-bot-admin.documents.azure.com:443/;AccountKey=DOgNvGNkeKBlcdzAPXR1q4eqxXWIYhY3r3jPVaKsz8qKvILrg76GlPKSnq0M8o0gNeVmdhygaS5uACDb8H7IEg=="
+  }
+}
