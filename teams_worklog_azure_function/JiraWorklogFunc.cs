@@ -81,25 +81,40 @@ namespace DotNetTraining.TeamsBot
     public class MultiResponse
     {
         [CosmosDBOutput("teams-bot-db", "teams-bot-container", Connection = "CosmosDbConnectionSetting")]
-        public CosmosDbRecordDocument Document { get; set; }
+        public CosmosDbRecordDocument? Document { get; set; }
         public HttpStatusCode response { get; set; }
     }
 
     public class CosmosDbRecordDocument
     {
-        public string id { get; set; }
-        public string email { get; set; }
-        public string baseUrl { get; set; }
-        public string issueId { get; set; }
-        public JiraWorklogBody WorklogBody { get; set; }
+        public string? id { get; set; }
+        public string? email { get; set; }
+        public string? baseUrl { get; set; }
+        public string? issueId { get; set; }
+        public JiraWorklogBody? WorklogBody { get; set; }
         public HttpStatusCode jiraRequestStatus { get; set; }
     }
     public class MyDocument
     {
-        public string id { get; set; }
-        public string message { get; set; }
+        public string? id { get; set; }
+        public string? message { get; set; }
     }
 
     public record JiraWorklogOptions(string baseUrl, string email, string token, string issueId, JiraWorklogBody body);
-    public record JiraWorklogBody(string started, long? timeSpentSeconds, string? timeSpent);
+    public record JiraWorklogBody(string started, long? timeSpentSeconds, string? timeSpent, CommentRecord? comment);
+    public record CommentRecord(
+        string type,
+        int version,
+        List<ContentRecord> content
+    );
+
+    public record ContentRecord(
+        string type,
+        List<TextContentRecord> content
+    );
+
+    public record TextContentRecord(
+        string text,
+        string type = "text"
+    );
 }
