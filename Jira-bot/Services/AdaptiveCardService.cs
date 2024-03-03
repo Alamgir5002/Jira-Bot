@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using Jira_bot.Bots;
-using AdaptiveCards;
 
 namespace Jira_bot.Services
 {
@@ -97,6 +96,7 @@ namespace Jira_bot.Services
             if (!sourceWorklogService.checkIfUserAlreadyRegistered(turnContext.Activity.From.Id))
             {
                 string notFoundMessage = "Source details not found";
+                logger.LogWarning($"{notFoundMessage} against user with id {turnContext.Activity.From.Id}");
                 await turnContext.SendActivityAsync(MessageFactory.Text(notFoundMessage, notFoundMessage), cancellationToken);
                 await ShowAddSourceCredentialsCard(turnContext, cancellationToken);
                 return ;
