@@ -86,7 +86,7 @@ namespace Jira_bot.Services
             await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
         }
 
-        public async Task ShowAddSourceCredentialsCard(ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
+        public async Task ShowAddSourceCredentialsCard<TActivity>(ITurnContext<TActivity> turnContext, CancellationToken cancellationToken) where TActivity : IActivity
         {
             var cardAttachment = adaptiveCards.CreateSourceAdaptiveCard();
             var reply = MessageFactory.Attachment(cardAttachment);
@@ -94,6 +94,14 @@ namespace Jira_bot.Services
         }
         public async Task ShowAddWorklogCard(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
+            if (!sourceWorklogService.checkIfUserAlreadyRegistered(turnContext.Activity.From.Id))
+            {
+                string notFoundMessage = "Source details not found";
+                await turnContext.SendActivityAsync(MessageFactory.Text(notFoundMessage, notFoundMessage), cancellationToken);
+                await ShowAddSourceCredentialsCard(turnContext, cancellationToken);
+                return ;
+            }
+
             var cardAttachment = adaptiveCards.CreateWorklogAdaptiveCard();
             var reply = MessageFactory.Attachment(cardAttachment);
             await turnContext.SendActivityAsync(reply, cancellationToken);
