@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Jira_bot.Models
 {
@@ -14,5 +15,23 @@ namespace Jira_bot.Models
     {
         public string started {get; set; }
         public int timeSpentSeconds { get; set;}
+        public CommentRecord? comment { get; set;}
+
     }
+
+    public record CommentRecord(
+        List<ContentRecord> content,
+        string type = "doc",
+        int version = 1
+    );
+
+    public record ContentRecord(
+        List<TextContentRecord> content,
+        string type = "paragraph"
+    );
+
+    public record TextContentRecord(
+        string text,
+        string type = "text"
+    );
 }

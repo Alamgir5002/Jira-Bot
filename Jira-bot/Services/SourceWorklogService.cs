@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Jira_bot.Services
 {
-    public class SourceWorklogService : IJSourceWorklogService
+    public class SourceWorklogService : ISourceWorklogService
     {
         private ISourceDetailsRepository sourceDetailRepository;
         private HttpClientService httpClientService;
-        private ILogger<SourceWorklogService> logger;
-        public SourceWorklogService(ISourceDetailsRepository sourceDetailRepository, ILogger<SourceWorklogService> logger)
+        private ILogger<ISourceWorklogService> logger;
+        public SourceWorklogService(ISourceDetailsRepository sourceDetailRepository, ILogger<ISourceWorklogService> logger)
         {
             this.sourceDetailRepository = sourceDetailRepository;
             httpClientService = new HttpClientService();
@@ -47,7 +47,7 @@ namespace Jira_bot.Services
             {
                 SourceDetails sourceDetails = new SourceDetails();
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(sourceWorkLogDetails);
-                HttpResponseMessage responseMessage = await httpClientService.SendPostRequest("https://dotnetbreakworklogbot.azurewebsites.net/api/DoWorklog", json);
+                HttpResponseMessage responseMessage = await httpClientService.SendPostRequest("http://localhost:7050/api/DoWorklog", json);
                 logger.LogDebug($"Response from azure function : {responseMessage.Content.ToString()}");
 
                 if (responseMessage.IsSuccessStatusCode)

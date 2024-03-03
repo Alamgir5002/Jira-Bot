@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Jira_bot.Interfaces
 {
-    public interface IJSourceWorklogService
+    public interface ISourceWorklogService
     {
         public SourceDetails AddSourceDetails(SourceDetails sourceDetails);
         public bool checkIfUserAlreadyRegistered(string userId);
