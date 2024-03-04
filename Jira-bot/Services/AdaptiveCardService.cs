@@ -80,9 +80,7 @@ namespace Jira_bot.Services
                 SourceURL = (string)jsonData["SourceURL"],
                 Id = turnContext.Activity.From.Id
             };
-            sourceWorklogService.AddSourceDetails(sourceDetails);
-            var replyText = "Source details added successfully. Now you can log your work using log command";
-            await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
+            await sourceWorklogService.AddSourceDetails(sourceDetails, turnContext, cancellationToken);
         }
 
         public async Task ShowAddSourceCredentialsCard<TActivity>(ITurnContext<TActivity> turnContext, CancellationToken cancellationToken) where TActivity : IActivity

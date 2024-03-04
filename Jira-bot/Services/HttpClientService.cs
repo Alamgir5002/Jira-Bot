@@ -1,9 +1,7 @@
-﻿using Jira_bot.Models;
-using Newtonsoft.Json;
-using System.Net.Http;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Jira_bot.Services
 {
@@ -21,6 +19,21 @@ namespace Jira_bot.Services
             request.Headers.Add("Accept", "application/json");
             request.Content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             return await httpClient.SendAsync(request);
+        }
+
+        public async Task<HttpResponseMessage> SendGetRequest(string endpoint)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, endpoint);
+            request.Headers.Add("Accept", "application/json");
+            return await httpClient.SendAsync(request);
+        }
+
+        public async Task<HttpResponseMessage> SendGetRequestWithBasicAuthHeaders(string endpoint, string basicAuthString)
+        {
+            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", basicAuthString);
+            return await httpClient.GetAsync(endpoint);
+
         }
     }
 }

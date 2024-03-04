@@ -1,9 +1,13 @@
 ﻿using Jira_bot.Interfaces;
 using Jira_bot.Models;
 using Jira_bot.Repository.Interfaces;
+using Microsoft.Bot.Builder;
+using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Jira_bot.Services
@@ -13,15 +17,31 @@ namespace Jira_bot.Services
         private ISourceDetailsRepository sourceDetailRepository;
         private HttpClientService httpClientService;
         private ILogger<ISourceWorklogService> logger;
+
+        private const string JIRA_INSTANCE_INFO_URL = "/rest/api/3/serverInfo";
+        private const string JIRA_USER_CREDENTIALS_INFO_URL = "/rest/api/3/myself";
         public SourceWorklogService(ISourceDetailsRepository sourceDetailRepository, ILogger<ISourceWorklogService> logger)
         {
             this.sourceDetailRepository = sourceDetailRepository;
             httpClientService = new HttpClientService();
             this.logger = logger;   
         }
-        public SourceDetails AddSourceDetails(SourceDetails sourceDetails)
+        public async Task AddSourceDetails(SourceDetails sourceDetails, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
-            return sourceDetailRepository.AddSourceDetails(sourceDetails);
+            try
+            {
+                await validateSourceURL(sourceDetails);
+                await validateSourceDetails(sourceDetails);
+
+                sourceDetailRepository.AddSourceDetails(sourceDetails);
+
+                var replyText = "Source details added successfully. Now you can log your work using log command";
+                await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
+            }
+            catch(Exception exception)
+            {
+                await turnContext.SendActivityAsync(MessageFactory.Text(exception.Message, exception.Message), cancellationToken);
+            }
         }
 
         public async Task<string> AddWorklogForUser(SourceWorkLog worklogDetails, string userId)
@@ -68,6 +88,35 @@ namespace Jira_bot.Services
         {
             SourceDetails sourceDetails = sourceDetailRepository.GetSourceDetailsFromUserId(userId);
             return sourceDetails != null;
+        }
+
+
+        private async Task validateSourceURL(SourceDetails sourceDetails)
+        {
+            string url = sourceDetails.SourceURL + JIRA_INSTANCE_INFO_URL;
+            if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            {
+                throw new Exception($"Invalid URL : {sourceDetails.SourceURL}");
+            }
+
+            HttpResponseMessage httpResponse = await httpClientService.SendGetRequest(url);
+
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                throw new Exception($"JIRA instance not found at URL : {sourceDetails.SourceURL}");
+            }
+        }
+
+        private async Task validateSourceDetails(SourceDetails sourceDetails)
+        {
+            string basicAuthString = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{sourceDetails.UserEmail}:{sourceDetails.SourceToken}"));
+            string url = sourceDetails.SourceURL + JIRA_USER_CREDENTIALS_INFO_URL;
+
+            HttpResponseMessage httpResponse = await httpClientService.SendGetRequestWithBasicAuthHeaders(url, basicAuthString);
+            if(!httpResponse.IsSuccessStatusCode)
+            {
+                throw new Exception("Invalid source token or user email");
+            }
         }
     }
 }
