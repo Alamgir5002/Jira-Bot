@@ -47,7 +47,7 @@ namespace Jira_bot.Services
             {
                 SourceDetails sourceDetails = new SourceDetails();
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(sourceWorkLogDetails);
-                HttpResponseMessage responseMessage = await httpClientService.SendPostRequest("http://localhost:7050/api/DoWorklog", json);
+                HttpResponseMessage responseMessage = await httpClientService.SendPostRequest("https://dotnetbreakworklogbot.azurewebsites.net/api/DoWorklog", json);
                 logger.LogDebug($"Response from azure function : {responseMessage.Content.ToString()}");
 
                 if (responseMessage.IsSuccessStatusCode)

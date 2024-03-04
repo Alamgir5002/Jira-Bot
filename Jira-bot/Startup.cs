@@ -35,7 +35,7 @@ namespace Jira_bot
                 options.SerializerSettings.MaxDepth = HttpHelper.BotMessageSerializerSettings.MaxDepth;
             });
 
-            var connectionString = "Server=localhost;Database=Jira_bot;User Id=DESKTOP-60FBUU2;Trusted_Connection=True;TrustServerCertificate=True;";
+            var connectionString = "Server=tcp:banking-server-sql-server.database.windows.net,1433;Initial Catalog=Jira-bot-DB;Persist Security Info=False;User ID=alamgir5002;Password=mercedes@5002;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             services.AddDbContext<DatabaseContext>(options =>
             {
                 options.UseSqlServer(connectionString);
