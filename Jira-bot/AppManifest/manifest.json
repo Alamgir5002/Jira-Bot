@@ -1,0 +1,43 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.8/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.8",
+  "version": "1.0.1",
+  "id": "238e0c76-f30c-47a2-abc5-0d6c0fd4e56e",
+  "packageName": "com.microsoft.teams.xxYOURBOTNAMExx",
+  "developer": {
+    "name": "Uworx-bot group",
+    "websiteUrl": "https://website.com/privacy",
+    "privacyUrl": "https://website.com/privacy",
+    "termsOfUseUrl": "https://website.com/app-tos"
+  },
+  "name": {
+    "short": "JIRA Worklog BOT",
+    "full": ""
+  },
+  "description": {
+    "short": "Jira Worklog Bot",
+    "full": "This bot is created using bot framework C# SDK, integrated with Azure function.This bot allows users to log time entries directly into Jira using their credentials, streamlining the time-tracking process and enhancing productivity within the Teams environment."
+  },
+  "icons": {
+    "outline": "outline.png",
+    "color": "MS bot icon.png"
+  },
+  "accentColor": "#000000",
+  "bots": [
+    {
+      "botId": "238e0c76-f30c-47a2-abc5-0d6c0fd4e56e",
+      "scopes": [
+        "team",
+        "personal",
+        "groupchat"
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": []
+}
