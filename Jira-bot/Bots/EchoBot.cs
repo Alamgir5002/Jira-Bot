@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System;
 using Jira_bot.Interfaces;
 using Newtonsoft.Json.Linq;
-using Microsoft.Extensions.Logging;
 using Microsoft.Bot.Builder.Teams;
 using Jira_bot.Services;
 
@@ -35,10 +34,10 @@ namespace Jira_bot.Bots
                 switch (cardType)
                 {
                     case "worklogCard":
-                        await adaptiveCardService.processWorklogCard(turnContext, cardData, cancellationToken);
+                        await adaptiveCardService.ProcessWorklogCard(turnContext, cardData, cancellationToken);
                         break;
                     default:
-                        await adaptiveCardService.processSourceCard(turnContext, cardData, cancellationToken);
+                        await adaptiveCardService.ProcessSourceCard(turnContext, cardData, cancellationToken);
                         break;
                 }
             }

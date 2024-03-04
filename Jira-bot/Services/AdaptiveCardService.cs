@@ -13,6 +13,9 @@ using Jira_bot.Bots;
 
 namespace Jira_bot.Services
 {
+    /// <summary>
+    /// Class to process operations according to adaptive cards
+    /// </summary>
     public class AdaptiveCardService
     {
         private readonly ILogger<AdaptiveCardService> logger;
@@ -26,7 +29,10 @@ namespace Jira_bot.Services
             adaptiveCards = new BotAdaptiveCards();
         }
 
-        public async Task processWorklogCard(ITurnContext<IMessageActivity> turnContext, JObject jsonData, CancellationToken cancellationToken)
+        /// <summary>
+        /// Method responsible to process worklog card and add worklog on source
+        /// </summary>
+        public async Task ProcessWorklogCard(ITurnContext<IMessageActivity> turnContext, JObject jsonData, CancellationToken cancellationToken)
         {
             var worklogDetails = new SourceWorkLog
             {
@@ -44,6 +50,11 @@ namespace Jira_bot.Services
             await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
         }
 
+        /// <summary>
+        /// This method is responsible to create comment record structure
+        /// </summary>
+        /// <param name="description">Worklog Comment</param>
+        /// <returns>Comment Record instance</returns>
         private CommentRecord createCommentRecord(string description)
         {
             if (String.IsNullOrWhiteSpace(description))
@@ -71,7 +82,10 @@ namespace Jira_bot.Services
             });
         }
 
-        public async Task processSourceCard(ITurnContext<IMessageActivity> turnContext, JObject jsonData, CancellationToken cancellationToken)
+        /// <summary>
+        /// This method is responsible to process source card and save source details in database.
+        /// </summary>
+        public async Task ProcessSourceCard(ITurnContext<IMessageActivity> turnContext, JObject jsonData, CancellationToken cancellationToken)
         {
             var sourceDetails = new SourceDetails()
             {
@@ -83,12 +97,19 @@ namespace Jira_bot.Services
             await sourceWorklogService.AddSourceDetails(sourceDetails, turnContext, cancellationToken);
         }
 
+        /// <summary>
+        /// This method is responsible for showing source credentials card
+        /// </summary>
         public async Task ShowAddSourceCredentialsCard<TActivity>(ITurnContext<TActivity> turnContext, CancellationToken cancellationToken) where TActivity : IActivity
         {
             var cardAttachment = adaptiveCards.CreateSourceAdaptiveCard();
             var reply = MessageFactory.Attachment(cardAttachment);
             await turnContext.SendActivityAsync(reply, cancellationToken);
         }
+
+        /// <summary>
+        /// This method is responsible for showing worklog card
+        /// </summary>
         public async Task ShowAddWorklogCard(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
             if (!sourceWorklogService.checkIfUserAlreadyRegistered(turnContext.Activity.From.Id))

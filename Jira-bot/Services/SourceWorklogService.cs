@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace Jira_bot.Services
 {
+    /// <summary>
+    /// This class implements SourceWorklogService interface
+    /// </summary>
     public class SourceWorklogService : ISourceWorklogService
     {
         private ISourceDetailsRepository sourceDetailRepository;
@@ -26,6 +29,14 @@ namespace Jira_bot.Services
             httpClientService = new HttpClientService();
             this.logger = logger;   
         }
+
+        /// <summary>
+        /// This method is responsible to add source details in database
+        /// </summary>
+        /// <param name="sourceDetails">Source Details</param>
+        /// <param name="turnContext">Turn Context</param>
+        /// <param name="cancellationToken">Cancellation Token</param>
+        /// <returns></returns>
         public async Task AddSourceDetails(SourceDetails sourceDetails, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
             try
@@ -40,10 +51,17 @@ namespace Jira_bot.Services
             }
             catch(Exception exception)
             {
+                logger.LogError($"Exception occurred: {exception.Message}");
                 await turnContext.SendActivityAsync(MessageFactory.Text(exception.Message, exception.Message), cancellationToken);
             }
         }
 
+        /// <summary>
+        /// This method is responsible to add worklog for user
+        /// </summary>
+        /// <param name="worklogDetails">Worklog Details</param>
+        /// <param name="userId">User Id</param>
+        /// <returns></returns>
         public async Task<string> AddWorklogForUser(SourceWorkLog worklogDetails, string userId)
         {
             SourceDetails sourceDetails = sourceDetailRepository.GetSourceDetailsFromUserId(userId);
@@ -58,10 +76,15 @@ namespace Jira_bot.Services
             worklogDetails.token = sourceDetails.SourceToken;
             worklogDetails.baseUrl = sourceDetails.SourceURL;
 
-            return await AddWorklogOnSource(worklogDetails);
+            return await addWorklogOnSource(worklogDetails);
         }
 
-        private async Task<string> AddWorklogOnSource(SourceWorkLog sourceWorkLogDetails)
+        /// <summary>
+        /// This method calls azure function which is responsible for adding worklog on source
+        /// </summary>
+        /// <param name="sourceWorkLogDetails">worklog details</param>
+        /// <returns>Returns success/failure message</returns>
+        private async Task<string> addWorklogOnSource(SourceWorkLog sourceWorkLogDetails)
         {
             try
             {
@@ -83,6 +106,11 @@ namespace Jira_bot.Services
                 return ex.Message;
             }
         }
+        /// <summary>
+        /// Method to check if user already exist against given id
+        /// </summary>
+        /// <param name="userId">User Id</param>
+        /// <returns>boolean value to check if user already exist in database or not.</returns>
 
         public bool checkIfUserAlreadyRegistered(string userId)
         {
@@ -90,7 +118,11 @@ namespace Jira_bot.Services
             return sourceDetails != null;
         }
 
-
+        /// <summary>
+        /// Method responsible to validate source URL by calling source API call.
+        /// </summary>
+        /// <param name="sourceDetails">source details</param>
+        /// <exception cref="Exception">Throws exception if souce URL is invalid or not found on source.</exception>
         private async Task validateSourceURL(SourceDetails sourceDetails)
         {
             string url = sourceDetails.SourceURL + JIRA_INSTANCE_INFO_URL;
@@ -106,6 +138,12 @@ namespace Jira_bot.Services
                 throw new Exception($"JIRA instance not found at URL : {sourceDetails.SourceURL}");
             }
         }
+
+        /// <summary>
+        /// Method responsible to validate source details by calling API on source.
+        /// </summary>
+        /// <param name="sourceDetails">Source Details</param>
+        /// <exception cref="Exception">Throws exception if token or username are invalid.</exception>
 
         private async Task validateSourceDetails(SourceDetails sourceDetails)
         {

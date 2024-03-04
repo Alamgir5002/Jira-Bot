@@ -3,8 +3,16 @@ using Microsoft.Bot.Schema;
 
 namespace Jira_bot.Bots
 {
+    ///<summary>
+    /// This class is responsible to create adaptive card templates
+    /// </summary>
+
     public class BotAdaptiveCards
     {
+        /// <summary>
+        /// This method creates source adaptive card
+        /// </summary>
+        /// <returns>Source adaptive card template</returns>
         public Attachment CreateSourceAdaptiveCard()
         {
             var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
@@ -59,6 +67,10 @@ namespace Jira_bot.Bots
             };
         }
 
+        /// <summary>
+        /// This method is responsible for creating worklog adaptive card
+        /// </summary>
+        /// <returns>Worklog adaptive card template</returns>
         public Attachment CreateWorklogAdaptiveCard()
         {
             var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))

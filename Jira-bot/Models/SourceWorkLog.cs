@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Jira_bot.Models
 {
+    /// <summary>
+    /// This class represents source worklog entity
+    /// </summary>
     public class SourceWorkLog
     {
         public string baseUrl { get; set; }
