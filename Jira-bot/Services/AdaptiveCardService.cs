@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using Jira_bot.Bots;
+using Jira_bot.Exceptions;
 
 namespace Jira_bot.Services
 {
@@ -45,9 +46,21 @@ namespace Jira_bot.Services
                 }
             };
 
-            var replyText = await sourceWorklogService.AddWorklogForUser(worklogDetails, turnContext.Activity.From.Id);
-            logger.LogDebug("Reply Text:" + replyText);
-            await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
+            try
+            {
+                var replyText = await sourceWorklogService.AddWorklogForUser(worklogDetails, turnContext.Activity.From.Id);
+                logger.LogDebug("Reply Text:" + replyText);
+                await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
+            }
+            catch(Exception exception)
+            {
+                await turnContext.SendActivityAsync(MessageFactory.Text(exception.Message, exception.Message), cancellationToken);
+                if (exception is SourceDetailsException)
+                { 
+                    await ShowAddSourceCredentialsCard(turnContext, cancellationToken);
+                }
+            }
+
         }
 
         /// <summary>

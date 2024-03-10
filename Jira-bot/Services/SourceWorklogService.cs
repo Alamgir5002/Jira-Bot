@@ -1,4 +1,5 @@
-﻿using Jira_bot.Interfaces;
+﻿using Jira_bot.Exceptions;
+using Jira_bot.Interfaces;
 using Jira_bot.Models;
 using Jira_bot.Repository.Interfaces;
 using Microsoft.Bot.Builder;
@@ -69,7 +70,7 @@ namespace Jira_bot.Services
             if(sourceDetails == null)
             {
                 logger.LogDebug($"Source details not found against user with id {userId}");
-                return "Can't log time on source because your source details are not present";
+                throw new SourceDetailsException("Can't log time on source because your source details are not present");
             }
 
             worklogDetails.email = sourceDetails.UserEmail;
@@ -98,7 +99,7 @@ namespace Jira_bot.Services
                     return $"Worklog added against issue {sourceWorkLogDetails.issueId}";
                 }
 
-                return "Error occurred";
+                return "Error occurred while adding worklog on JIRA, either issue not found or you don't have access to this issue.";
             }
             catch (Exception ex)
             {
