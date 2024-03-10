@@ -54,6 +54,7 @@ namespace Jira_bot.Services
             {
                 logger.LogError($"Exception occurred: {exception.Message}");
                 await turnContext.SendActivityAsync(MessageFactory.Text(exception.Message, exception.Message), cancellationToken);
+                await ShowAddSourceCredentialsCard(turnContext, cancellationToken);
             }
         }
 
