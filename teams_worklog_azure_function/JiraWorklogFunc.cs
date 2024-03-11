@@ -1,5 +1,4 @@
 using Microsoft.Azure.Functions.Worker;
-using HttpResponseData = Microsoft.Azure.Functions.Worker.Http.HttpResponseData;
 using Microsoft.Extensions.Logging;
 using FromBodyAttribute = Microsoft.Azure.Functions.Worker.Http.FromBodyAttribute;
 using Newtonsoft.Json;
@@ -7,6 +6,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Net;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DotNetTraining.TeamsBot
 {
@@ -20,36 +21,45 @@ namespace DotNetTraining.TeamsBot
         }
 
         [Function("DoWorklog")]
-        public async Task<MultiResponse> Run(
+        public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req,
             [FromBody] JiraWorklogOptions options)
         {
-            var worklogDoc = await AddWorklogOnJiraAsync(options);
-
-            var response = req.CreateResponse(worklogDoc.StatusCode);
-            response.Headers.Add("Content-Type", "application/json");
-            await response.WriteStringAsync(JsonConvert.SerializeObject(new
+            try
             {
-                message = "Worklog created successfully!",
-            }), Encoding.UTF8);
+                var worklogDoc = await AddWorklogOnJiraAsync(options);
 
-            var multiResponseDoc = new CosmosDbRecordDocument
+                var response = req.CreateResponse(worklogDoc.StatusCode);
+                response.Headers.Add("Content-Type", "application/json");
+                await response.WriteStringAsync(JsonConvert.SerializeObject(new
+                {
+                    message = "Worklog created successfully!",
+                }), Encoding.UTF8);
+
+                var multiResponseDoc = new CosmosDbRecordDocument
+                {
+                    id = Guid.NewGuid().ToString(),
+                    email = options.email,
+                    baseUrl = options.baseUrl,
+                    issueId = options.issueId,
+                    WorklogBody = options.body,
+                    jiraRequestStatus = worklogDoc.StatusCode
+                };
+
+                var multiResponse = new MultiResponse()
+                {
+                    Document = multiResponseDoc,
+                    response = worklogDoc.StatusCode
+                };
+
+                return new OkObjectResult(multiResponse);
+            }
+            catch (Exception ex)
             {
-                id = Guid.NewGuid().ToString(),
-                email = options.email,
-                baseUrl = options.baseUrl,
-                issueId = options.issueId,
-                WorklogBody = options.body,
-                jiraRequestStatus = worklogDoc.StatusCode
-            };
 
-            var multiResponse = new MultiResponse()
-            {
-                Document = multiResponseDoc,
-                response = worklogDoc.StatusCode
-            };
-
-            return multiResponse;
+                return new BadRequestObjectResult(ex.Message);
+            }
+            
         }
 
         public async Task<HttpResponseMessage> AddWorklogOnJiraAsync(JiraWorklogOptions options)
